@@ -1,0 +1,11 @@
+Folder data
+# user:19fc23c5-ec94-5299-b0ef-02de1cd5d6be
+# project:pro1
+# analysis:ancom
+# class:bodysite
+# parameter:gut
+# metadata_coloumn:subject
+
+[2024-03-06 00:15:18.141191] "ancom.qzv"|builded
+[2024-03-06 00:15:20.523997] "ancom_unzip"|exported
+[2024-03-06 00:15:20.558996] !!! finish !!!

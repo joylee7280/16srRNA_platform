@@ -1,0 +1,10 @@
+Folder data
+# user:19fc23c5-ec94-5299-b0ef-02de1cd5d6be
+# project:pro1
+# analysis:LEfSe
+
+[2024-03-14 03:06:04.187419] original collapse table builed 
+[2024-03-14 03:06:05.073425] adjust collapse table 
+[2024-03-14 03:06:54.066100] LEfSe lda plot|builded 
+[2024-03-14 03:07:09.305605] LEfSe cladogram|builded 
+[2024-03-14 03:07:17.260103] !!! finish !!!
