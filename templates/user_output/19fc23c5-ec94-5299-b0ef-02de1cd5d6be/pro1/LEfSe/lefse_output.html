@@ -1,0 +1,77 @@
+{% extends 'base.html' %}
+{% block title %}LEfSe_output{% endblock %}
+{% block content %}
+{% load static %}
+
+<head>
+    <script src="https://cdn.bootcss.com/jquery/3.4.1/jquery.js"></script>
+    <style>
+        .flex-container-row {
+            display: flex;
+            flex-direction: row
+        }
+
+        .flex-container-col {
+            display: flex;
+            flex-direction: column
+        }
+    </style>
+</head>
+
+<body>
+    LEfSe
+    <div class="flex-container-row">
+        <div class="flex-container-col">
+            <input type="button" id="view_c" value="Download cladogram" href="/lefse/cladogram/" style="width:200px"
+                align="middle">
+            <img id="img" src="{% static 'user_output/19fc23c5-ec94-5299-b0ef-02de1cd5d6be/pro1/LEfSe/lefse_total_clado.png'%}" width="500">
+        </div>
+        <div class="flex-container-col">
+            <input type="button" id="view_b" value="Download barplot" href="/lefse/barplot/" style="width:200px"
+                align="middle">
+            <img id="img" src="{% static 'user_output/19fc23c5-ec94-5299-b0ef-02de1cd5d6be/pro1/LEfSe/lefse_final_lda.png'%}" width="500">
+        </div>
+    </div>
+</body>
+<script>
+    $(function () {
+        $('#view_b').click(function (e) {
+            e.preventDefault
+            //ajax上傳文件必須通過FormData對象傳輸數據
+            $.ajax({
+                url: "/lefse/barplot/",
+                type: 'post',
+                processData: false,//不處理數據
+                contentType: false,//不設置內容類型，按原格式傳輸
+                success: function (response) {
+                    // alert(response)
+
+                    window.open("/lefse/barplot/")
+                },
+                error: function () {
+                    alert("失敗")
+                }
+            })
+        })
+
+        $('#view_c').click(function (e) {
+            e.preventDefault
+            //ajax上傳文件必須通過FormData對象傳輸數據
+            $.ajax({
+                url: "/lefse/cladogram/",
+                type: 'post',
+                processData: false,//不處理數據
+                contentType: false,//不設置內容類型，按原格式傳輸
+                success: function (response) {
+                    // alert(response)
+                    window.open("/lefse/cladogram/")
+                },
+                error: function () {
+                    alert("失敗")
+                }
+            })
+        })
+
+    })
+</script>
+{% endblock %}

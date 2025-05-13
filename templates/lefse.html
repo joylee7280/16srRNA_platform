@@ -1,0 +1,145 @@
+{% extends 'base.html' %}
+{% block title %}LEfSe{% endblock %}
+{% block content %}
+{% load static %}
+
+<head>
+    <script src="https://cdn.bootcss.com/jquery/3.4.1/jquery.js"></script>
+</head>
+
+<body>
+    LEfSe
+    <div>Please choose the project
+        {% csrf_token %}
+        <select id="select_proj" name="select_proj">
+            {% for proj in proj_list %}
+            <option>{{proj}}</option>
+            <!-- <ul><a class="dropdown-item">{{proj}}</a></ul> -->
+            {% endfor %}
+        </select>
+        <input type="button" id="target_proj" value="Confirm">
+        {{ur_proj}}
+    </div>
+    <div id="process" style="display:none;">
+        <button class="btn btn-primary" type="button" disabled>
+            <span class="spinner-border spinner-border-sm" role="status" aria-hidden="true"></span>
+            Loading...
+        </button>
+    </div>
+    <div>
+        <!-- <img id="img"
+            src="{% static 'user_output/19fc23c5-ec94-5299-b0ef-02de1cd5d6be/pro2/LEfSe/lefse_final_lda.png'%}"
+            width="1920" height="1000"> -->
+
+        <div id="view_div" style="display:none;">
+            {% csrf_token %}
+            <input type="button" id="view_output" value="Show output" href="/lefse/lefse_output.html/">
+        </div>
+    </div>
+</body>
+<script>
+    showimg = false
+    img_path = ""
+    $(function () {
+
+        function addimage(img_path) {
+            $("#img").attr("src", img_path)
+            alert(img_path)
+        }
+
+        $('#target_proj').click(function (e) {
+            e.preventDefault
+            //ajax上傳文件必須通過FormData對象傳輸數據
+            var formdata = new FormData();
+            var user_proj = $('#select_proj').val();
+            // alert($('#select_proj').val())
+            formdata.append('user_proj', user_proj);
+            $("#target_proj").attr("disabled", "disabled")
+            $("#process").css("display", "inline")
+            $.ajax({
+                url: "/lefse/",
+                type: 'post',
+                data: formdata,
+                processData: false,//不處理數據
+                contentType: false,//不設置內容類型，按原格式傳輸
+                success: function (response) {
+                    $("#target_proj").attr("disabled", false)
+                    $("#download").css("display", "inline")
+                    $("#view_div").css("display", "inline")
+                    $("#process").css("display", "none")
+                },
+                error: function () {
+                    alert("失敗")
+                }
+            })
+            // alert("before")
+            // alert(img_path)
+            // // if (showimg) {
+            // // alert(showimg)
+            // $("#img").attr("src", img_path)
+            // // }
+            // alert("after")
+        })
+
+        $('#view_output').click(function (e) {
+            e.preventDefault
+            //ajax上傳文件必須通過FormData對象傳輸數據
+            var formdata = new FormData();
+            var user_proj = $('#select_proj').val();
+            formdata.append('user_proj', user_proj);
+            $.ajax({
+                url: "/lefse/lefse_output/",
+                type: 'post',
+                data: formdata,
+                processData: false,//不處理數據
+                contentType: false,//不設置內容類型，按原格式傳輸
+                success: function (response) {
+                    // alert(response)
+                    window.open("/lefse/lefse_output/")
+                },
+                error: function () {
+                    alert("失敗")
+                }
+            })
+        })
+
+        $('#view_b').click(function (e) {
+            e.preventDefault
+            //ajax上傳文件必須通過FormData對象傳輸數據
+            $.ajax({
+                url: "/lefse/barplot/",
+                type: 'post',
+                processData: false,//不處理數據
+                contentType: false,//不設置內容類型，按原格式傳輸
+                success: function (response) {
+                    // alert(response)
+
+                    window.open("/lefse/barplot/")
+                },
+                error: function () {
+                    alert("失敗")
+                }
+            })
+        })
+
+        $('#view_c').click(function (e) {
+            e.preventDefault
+            //ajax上傳文件必須通過FormData對象傳輸數據
+            $.ajax({
+                url: "/lefse/cladogram/",
+                type: 'post',
+                processData: false,//不處理數據
+                contentType: false,//不設置內容類型，按原格式傳輸
+                success: function (response) {
+                    // alert(response)
+                    window.open("/lefse/cladogram/")
+                },
+                error: function () {
+                    alert("失敗")
+                }
+            })
+        })
+
+    })
+</script>
+{% endblock %}

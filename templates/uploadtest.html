@@ -1,0 +1,139 @@
+<body>
+    <!-- <label for="sample-metadata">sample-metadata：</label>
+            <input type="file" id="sample-metadata">
+            <input type="button" id="uploaded_sample" value="Upload">
+            <hr />
+            <label for="table">table：</label>
+            <input type="file" id="table">
+            <input type="button" id="uploaded_table" value="Upload">
+            <hr />
+            <label for="taxonomy">taxonomy：</label>
+            <input type="file" id="taxonomy">
+            <input type="button" id="uploaded_taxonomy" value="Upload"> -->
+</body>
+<script>
+    $(function () {
+
+        // build_project
+        $('#build_project').click(function (e) {
+            e.preventDefault();
+            //ajax上傳文件必須通過FormData對象傳輸數據
+            var formdata = new FormData();
+            var csrf_data = $('input[name=csrfmiddlewaretoken]').val();
+            var user_proj = $('#user_proj').val();
+            formdata.append('csrfmiddlewaretoken', csrf_data);//csrf認證的鍵是固定的
+            formdata.append('user_proj', user_proj);
+            $.ajax({
+                url: "/addproj/",
+                type: 'post',
+                data: formdata,
+                processData: false,//不處理數據
+                contentType: false,//不設置內容類型，按原格式傳輸
+                success: function (response) {
+                    alert(response)
+                },
+                error: function () {
+                    alert("失敗")
+                }
+            })
+            alert("success")
+        })
+        $("#fileuploader").uploadFile({
+            url: "/addproj/",
+            fileName: "myfile"
+        });
+        // upload sample-metadata
+        // $(function () {
+        $('#uploaded_sample').uploadFile({
+            allowedTypes: "tsv,txt",
+            url: "/addproj/",
+            fileName: "sample-metadata",
+            showDelete: true,
+            showProgress: true,
+            dynamicFormData: function () {
+                var nameVal = $('#user_proj').val();
+                var uploadParam = {
+                    projName_2: nameVal
+                }
+                return uploadParam
+            }
+        })
+        //ajax上傳文件必須通過FormData對象傳輸數據
+        // var formdata = new FormData();
+        // var csrf_data = $('input[name=csrfmiddlewaretoken]').val();
+        // //獲取上傳文件對象：定位對象，轉成DOM對象，取值(文件對象列表)
+        // var file = $('#sample-metadata')[0].files[0];
+        // var user_proj = $('#user_proj').val();
+        // formdata.append('csrfmiddlewaretoken', csrf_data);//csrf認證的鍵是固定的
+        // formdata.append('user_proj', user_proj)
+        // // alert(user_proj)
+        // formdata.append('sample-metadata', file);
+        // formdata.append('sample-metadata_name', $('#sample-metadata').val());
+
+        // formdata.append('sample-metadata',$('#sample-metadata')[0].files[0])
+        // $.ajax({
+        //     url: "/addproj/",
+        //     type: 'post',
+        //     data: formdata,
+        //     processData: false,//不處理數據
+        //     contentType: false,//不設置內容類型，按原格式傳輸
+        //     success: function (response) {
+        //         alert(response)
+        //     }
+
+        // })
+
+        // })
+        // upload table
+        // $(function () {
+        $('#uploaded_table').uploadFile(function () {
+            //ajax上傳文件必須通過FormData對象傳輸數據
+            var formdata = new FormData();
+            var csrf_data = $('input[name=csrfmiddlewaretoken]').val();
+            //獲取上傳文件對象：定位對象，轉成DOM對象，取值(文件對象列表)
+            var file = $('#table')[0].files[0];
+            var user_proj = $('#user_proj').val();
+            formdata.append('csrfmiddlewaretoken', csrf_data);//csrf認證的鍵是固定的
+            formdata.append('user_proj', user_proj)
+            formdata.append('table', file);
+            formdata.append('table_name', $('#table').val());
+            $.ajax({
+                url: "/addproj/",
+                type: 'post',
+                data: formdata,
+                processData: false,//不處理數據
+                contentType: false,//不設置內容類型，按原格式傳輸
+                success: function (response) {
+                    alert(response)
+                },
+
+            })
+        })
+        // })
+        // upload taxonomy
+        // $(function () {
+        $('#uploaded_taxonomy').uploadFile(function () {
+            //ajax上傳文件必須通過FormData對象傳輸數據
+            var formdata = new FormData();
+            var csrf_data = $('input[name=csrfmiddlewaretoken]').val();
+            //獲取上傳文件對象：定位對象，轉成DOM對象，取值(文件對象列表)
+            var file = $('#taxonomy')[0].files[0];
+            var user_proj = $('#user_proj').val();
+            formdata.append('csrfmiddlewaretoken', csrf_data);//csrf認證的鍵是固定的
+            formdata.append('user_proj', user_proj)
+            formdata.append('taxonomy', file);
+            formdata.append('taxonomy_name', $('#taxonomy').val());
+            $.ajax({
+                url: "/addproj/",
+                type: 'post',
+                data: formdata,
+                processData: false,//不處理數據
+                contentType: false,//不設置內容類型，按原格式傳輸
+                success: function (response) {
+                    alert(response)
+                },
+
+            })
+        })
+    })
+</script>

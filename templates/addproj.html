@@ -1,0 +1,172 @@
+{% extends 'base.html' %}
+{% block title %}addproj{% endblock %}
+{% block content %}
+{% load static %}
+
+<head>
+    <script src="https://cdn.bootcss.com/jquery/3.4.1/jquery.js"></script>
+    <!--不能用下面這個-->
+    <!-- <script src="/work1791/b09901010/project/mainsite/templates/static/js/jquery-3.2.1.min.js"></script> -->
+    <!-- <script src="/work1791/b09901010/project/mainsite/templates/static/js/jquery-3.2.1.min.js"></script> -->
+
+    <!--uploadfile-->
+    <link rel="stylesheet" type="text/css" href="{% static 'css/upload.css' %}">
+    <link rel="stylesheet" type="text/css" href="{% static 'css/login.css' %}" />
+    <!-- <script src="http://ajax.googleapis.com/ajax/libs/jquery/1.9.1/jquery.min.js"></script> -->
+    <script src="{% static 'js/upload.js' %}"></script>
+</head>
+
+<body>
+    <!--Build Project-->
+    <div class=" card-header bg-primary" align="center">
+        <h4 style="color:white">Please Build Project</h4>
+    </div>
+    <div style="padding:1em"></div>
+    <div align="center">
+        {% csrf_token %}
+        <label for="user_proj">
+            <h4 style="color:gray">Project name：</h4>
+        </label>
+        <input type="text" id="user_proj" name="user_proj">
+        <input type="button" id="build_project" value="Build" style="color:black"> <!--submit要改button-->
+        <br />
+    </div>
+    <!--Upload File-->
+    <div style="padding:1em"></div>
+    <!-- <div id="upload"> -->
+    <div id="upload" style="display:none;">
+        <div class="card-header bg-primary" align="center">
+            <h4 style="color:white">Upload Files</h4>
+        </div>
+        <div align="center">
+            {% csrf_token %}
+            <div>
+                <div style="padding: 0.5em"></div>
+                <h4 style="color:gray">sample-metadata (.tsv /.txt)</h4>
+                <div id="uploaded_sample" style="color:#d4a762b3">Upload</div>
+            </div>
+            <div>
+                <div style="padding: 0.5em;"></div>
+                <h4 style="color:gray">table (.qza)</h4>
+                <div id="uploaded_table" style="color:rgba(212, 167, 98, 0.7)">Upload</div>
+            </div>
+            <div>
+                <div style="padding: 0.5em"></div>
+                <h4 style="color:gray">taxonomy (.qza)</h4>
+                <div id="uploaded_taxonomy" style="color:#d4a762b3">Upload</div>
+            </div>
+        </div>
+        <div align="center">
+            <div id="guide" style="display:none">If you have uploaded all your files, you can head to
+                <a href="/ancom/">Ancom</a>
+                <a href="/ancombc/">Ancom-BC</a>
+                <a href="/lefse/">LEfSe</a>
+                page to preprocess your sequence file.
+            </div>
+        </div>
+    </div>
+
+    <!-- </div> -->
+
+</body>
+
+<script>
+    var filecount = 0
+    $(function () {
+
+        ///////////////////// build_project/////////////////////
+        $('#build_project').click(function (e) {
+            filecount = 0
+            e.preventDefault();
+            var formdata = new FormData();
+            var user_proj = $('#user_proj').val();
+            formdata.append('user_proj', user_proj);
+            $.ajax({
+                url: "/addproj/",
+                type: 'post',
+                data: formdata,
+                processData: false,//不處理數據
+                contentType: false,//不設置內容類型，按原格式傳輸
+                success: function (response) {
+                    alert(response)
+                    $("#upload").css("display", "inline");
+                },
+                error: function () {
+                    alert("失敗")
+                }
+            })
+        })
+        ///////////////////// upload sample-metadata/////////////////////
+        $('#uploaded_sample').uploadFile({
+
+            allowedTypes: "tsv,txt",
+            url: "/addproj/",
+            fileName: "sample-metadata",
+            showDelete: true,
+            showDone: false,
+            showProgress: true,
+            dynamicFormData: function () {
+                var nameVal = $('#user_proj').val();
+                var uploadParam = {
+                    projName_2: nameVal
+                }
+                return uploadParam
+            }, onSuccess: function (y, x, z, s) {
+                filecount = filecount + 1
+            }
+        })
+        ///////////////////// upload table/////////////////////
+        $('#uploaded_table').uploadFile({
+            allowedTypes: "qza",
+            url: "/addproj/",
+            fileName: "table",
+            showDelete: true,
+            showDone: false,
+            showProgress: true,
+            dynamicFormData: function () {
+                var nameVal = $('#user_proj').val();
+                var uploadParam = {
+                    projName_2: nameVal
+                }
+                return uploadParam
+            },
+            onSuccess: function (y, x, z, s) {
+                filecount = filecount + 1
+            }
+        })
+        ///////////////////// upload taxonomy/////////////////////
+        $('#uploaded_taxonomy').uploadFile({
+            allowedTypes: "qza",
+            url: "/addproj/",
+            fileName: "taxonomy",
+            showDelete: true,
+            showDone: false,
+            showProgress: true,
+            dynamicFormData: function () {
+                var nameVal = $('#user_proj').val();
+                var uploadParam = {
+                    projName_2: nameVal
+                }
+                return uploadParam
+            },
+            onSuccess: function (y, x, z, s) {
+                filecount = filecount + 1
+                if (filecount === 3) {
+                    $("#guide").css("display", "inline");
+                }
+
+            }
+        })
+        // $(function () {
+        //     if (filecount === 3) {
+        //         alert("success")
+        //         $("#guide").css("display", "inline");
+        //
+        //     }
+        // })
+
+
+    })
+
+</script>
+{% endblock %}

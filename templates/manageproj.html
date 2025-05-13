@@ -1,0 +1,227 @@
+{% extends 'base.html' %}
+{% block title %}manageproj{% endblock %}
+{% block content %}
+{% load static %}
+
+<head>
+    <script src="https://cdn.bootcss.com/jquery/3.4.1/jquery.js"></script>
+    <!--uploadfile-->
+    <link rel="stylesheet" type="text/css" href="{% static 'css/upload.css' %}">
+    <link rel="stylesheet" type="text/css" href="{% static 'css/login.css' %}" />
+    <!-- <script src="http://ajax.googleapis.com/ajax/libs/jquery/1.9.1/jquery.min.js"></script> -->
+    <script src="{% static 'js/upload.js' %}"></script>
+    <script src="{% static 'js/manageproj.js' %}" charset="utf-8"></script>
+</head>
+
+<body>
+    <!--Build Project-->
+    <div class=" card-header bg-primary" align="center">
+        <h4 style="color:white">Please Choose Project</h4>
+    </div>
+    <div style="padding:1em"></div>
+    <div align="center">
+        {% csrf_token %}
+        <select id="select_proj" name="select_proj">
+            {% for proj in proj_list %}
+            <option>{{proj}}</option>
+            <!-- <ul><a class="dropdown-item">{{proj}}</a></ul> -->
+            {% endfor %}
+        </select>
+        <input type="button" id="target_proj" value="Confirm">
+        {{ur_proj}}
+    </div>
+    <br>
+    <!--Radio-->
+    <div id="radios" style="display:none;" align="center">
+        <div class="col-4">
+            <div class="card">
+                <div class="card-body" style="font-size:18; background-color:#d6d3cfb3">
+                    <div class="form-check">
+                        <label><input type="radio" name="flexRadioDefault" id="radio1">Add data to project</label>
+                    </div>
+                    <div class="form-check">
+                        <label><input type="radio" name="flexRadioDefault" id="radio2">Remove data from project</label>
+                    </div>
+                    <div class="form-check">
+                        <label><input type="radio" name="flexRadioDefault" id="radio3">Download results</label>
+                    </div>
+                    <div class="form-check">
+                        <label><input type="radio" name="flexRadioDefault" id="radio4">Remove projects</label>
+                        <div id="remove_proj" style="display:none;" align="center">
+                            <input type="button" id="remove_confirm" value="Confirm">
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <!--Add data to project-->
+        <div id="add" style="display:none;">
+            <div align="center">
+                {% csrf_token %}
+                <div>
+                    <div style="padding: 0.5em"></div>
+                    <h4 style="color:gray">sample-metadata (.tsv /.txt)</h4>
+                    <div id="uploaded_sample" style="color:#d4a762b3">Upload</div>
+                </div>
+                <div>
+                    <div style="padding: 0.5em;"></div>
+                    <h4 style="color:gray">table (.qza)</h4>
+                    <div id="uploaded_table" style="color:rgba(212, 167, 98, 0.7)">Upload</div>
+                </div>
+                <div>
+                    <div style="padding: 0.5em"></div>
+                    <h4 style="color:gray">taxonomy (.qza)</h4>
+                    <div id="uploaded_taxonomy" style="color:#d4a762b3">Upload</div>
+                </div>
+            </div>
+        </div>
+        <br>
+        <!--Remove data from project-->
+        <div id="remove_file" style="display:none;" align="center">
+            <div class="col-4">
+                <div class="card">
+                    <div class="card-body" style="font-size:18; background-color:#d6d3cfb3">
+                        <p align-"center"><b>Select a file type</b></p>
+                        <hr>
+                        <div>
+                            <label><input type="radio" name="data" id="deter_sample">sample-metadata</label>
+                        </div>
+                        <br>
+                        <div>
+                            <label><input type="radio" name="data" id="deter_table">table</label>
+                        </div>
+                        <br>
+                        <div>
+                            <label><input type="radio" name="data" id="deter_taxonomy">taxonomy</label>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+        <br>
+        <div id="select_file" style="display:none;" align="center">
+            <div class="col-4">
+                <div class="card">
+                    <div class="card-body" style="font-size:18; background-color:linen">
+                        <form action="." method="POST" id="sampleForm">
+                            {%csrf_token%}
+                            <div id="sample_blk" style="display:none;">
+                                <p align="center"><b>sample-metadata:</b></p>
+                                <hr>
+                                <div id="sample_opt"></div>
+                                <input type="button" id="rmB_sample" value="Confirm">
+                            </div>
+                        </form>
+                        <form action="." method="POST" id="tableForm">
+                            {%csrf_token%}
+                            <div id="table_blk" style="display:none;">
+                                <p align="center"><b>table:</b></p>
+                                <hr>
+                                <div id="table_opt"></div>
+                                <input type="button" id="rmB_table" value="Confirm">
+                            </div>
+                        </form>
+                        <form action="." method="POST" id="taxonomyForm">
+                            <div id="taxonomy_blk" style="display:none;">
+                                <p align="center"><b>taxonomy:</b></p>
+                                <hr>
+                                <div id="taxonomy_opt"></div>
+                                <input type="button" id="rmB_taxonomy" value="Confirm">
+                            </div>
+                        </form>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!--Download results-->
+    <div id="download" style="display:none;" align="center">
+        <div class="col-4">
+            <div class="card">
+                <div class="card-body" style="font-size:18; background-color:linen">
+                    <div>Ancom
+                        <hr>
+                        <div id="download_ancom" style="display:none;">
+                            <a href="/manageproj/download_ancomzip/" target="_blank" rel="noopener noreferrer"
+                                class="btn btn-default">
+                                download_ancomzip</a>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+        <br>
+        <div class="col-4">
+            <div class="card">
+                <div class="card-body" style="font-size:18; background-color:linen">
+                    <div>AncomBC
+                        <hr>
+                        <div id="download_ancombc" style="display:none;">
+                            <a href="/manageproj/download_ancombczip/" target="_blank" rel="noopener noreferrer"
+                                class="btn btn-default">
+                                download_ancombczip</a>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+        <br>
+        <div class="col-4">
+            <div class="card">
+                <div class="card-body" style="font-size:18; background-color:linen">
+                    <div>
+                        LefSe
+                        <hr>
+                        <div id="download_lefse" style="display:none;">
+                            <a href="/manageproj/download_lefsezip/" target="_blank" rel="noopener noreferrer"
+                                class="btn btn-default">
+                                download_lefsezip</a>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <!-- <div>
+                Ancom
+                <a href="/ancom/ancom-subject/download_data/" target="_blank" rel="noopener noreferrer"
+                    class="btn btn-default">
+                    Export as TSV</a>
+                <a href="/ancom/ancom-subject/download_ancom/" target="_blank" rel="noopener noreferrer"
+                    class="btn btn-default">
+                    Download ANCOM statistical results
+                </a>
+                <a href="/ancom/ancom-subject/download_abun/" target="_blank" rel="noopener noreferrer"
+                    class="btn btn-default">
+                    Download Percentile abundances of features by group
+                </a>
+            </div> -->
+        <!-- <div>
+                Ancombc
+            </div>
+            <div>
+                LEfSe
+                <a href="/lefse/barplot/" target="_blank" rel="noopener noreferrer" class="btn btn-default">
+                    Download barplot
+                </a>
+                <a href="/lefse/cladogram/" target="_blank" rel="noopener noreferrer" class="btn btn-default">
+                    Download cladogram
+                </a>
+            </div>
+            <div align="center">
+                <div id="guide">No results yet? You can head to
+                    <a href="/ancom/">Ancom</a>
+                    <a href="/ancombc/">Ancom-BC</a>
+                    <a href="/lefse/">LEfSe</a>
+                    page to preprocess your sequence file.
+                </div>
+            </div> -->
+    </div>
+    <!--Remove projects-->
+
+
+    <!-- </div> -->
+</body>
+{% endblock %}

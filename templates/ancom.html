@@ -1,0 +1,317 @@
+{% extends 'base.html' %}
+{% block title %}Ancom{% endblock %}
+{% block content %}
+
+<head>
+    <script src="https://cdn.bootcss.com/jquery/3.4.1/jquery.js"></script>
+</head>
+
+<body>
+    <div style="padding: 3px;">
+        <h4 style="color:gray">Ancom
+        </h4>
+    </div>
+    <div style="padding: 3px;">
+        Project:
+        {% csrf_token %}
+        <select id="select_proj" name="select_proj">
+            {% for proj in proj_list %}
+            <option>{{proj}}</option>
+            <!-- <ul><a class="dropdown-item">{{proj}}</a></ul> -->
+            {% endfor %}
+        </select>
+        <input type="button" id="target_proj" value="Confirm">
+    </div>
+    <div id="file" style="display:none" style="padding: 3px;">
+        Metadata:
+        {% csrf_token %}
+        <select id="select_metadata" name="select_proj">
+            {% for metadata in metadata_list %}
+            <option>{{metadata}}</option>
+            <!-- <ul><a class="dropdown-item">{{proj}}</a></ul> -->
+            {% endfor %}
+        </select>
+        Table:
+        {% csrf_token %}
+        <select id="select_table" name="select_proj">
+            {% for table in table_list %}
+            <option>{{table}}</option>
+            <!-- <ul><a class="dropdown-item">{{proj}}</a></ul> -->
+            {% endfor %}
+        </select>
+        Taxonomy:
+        {% csrf_token %}
+        <select id="select_taxonomy" name="select_proj">
+            {% for taxonomy in taxonomy_list %}
+            <option>{{taxonomy}}</option>
+            <!-- <ul><a class="dropdown-item">{{proj}}</a></ul> -->
+            {% endfor %}
+        </select>
+        <input type="button" id="target_file" value="Confirm">
+    </div>
+    <div style="padding:3px"></div>
+    <br />
+    <div id="class_div" style="display:none;padding: 3px;" align="center">Class:
+        {% csrf_token %}
+        <select id="select_clas" name="select_clas">
+
+        </select>
+        <input type="button" id="target_clas" value="Confirm">
+    </div>
+    <div style="padding:3px"></div>
+    <br />
+    <div id="para_div" style="display:none;padding: 3px;" align="center">Parameter:
+        {% csrf_token %}
+        <select id="select_para" name="select_para">
+
+        </select>
+        <input type="button" id="target_para" value="Confirm">
+    </div>
+    <div style="padding:3px"></div>
+    <br />
+    <div id="meta_div" style="display:none;padding: 3px;" align="center">Metadata_col:
+        {% csrf_token %}
+        <select id="select_meta" name="select_meta">
+
+        </select>
+        <input type="button" id="target_meta" value="Run">
+    </div>
+    <div style="padding:3px"></div>
+    <br />
+    <div id="process" style="display:none;">
+        <button class="btn btn-primary" type="button" disabled>
+            <span class="spinner-border spinner-border-sm" role="status" aria-hidden="true"></span>
+            Loading...
+        </button>
+    </div>
+    <!-- <div class="progress" >
+        <div class="progress-bar progress-bar-striped progress-bar-animated" role="progressbar" aria-valuenow="75"
+            aria-valuemin="0" aria-valuemax="100" style="width: 10%"></div>
+    </div> -->
+    <div id="view_div" style="display:none;" align="center">
+        {% csrf_token %}
+        <input type="button" id="view" value="Show the result" href="/ancom/ancom-subject/">
+    </div>
+</body>
+<script>
+    $(function () {
+        $('#target_proj').click(function (e) {
+            e.preventDefault
+            //ajax上傳文件必須通過FormData對象傳輸數據
+            var formdata = new FormData();
+            var user_proj = $('#select_proj').val();
+            // alert($('#select_proj').val())
+            formdata.append('user_proj', user_proj);
+            $("#file").css("display", "inline", "padding", "3px"); // 顯示第二層選單
+            $("#para_div").css("display", "none")
+            $("#meta_div").css("display", "none")
+            $("#view_div").css("display", "none")
+            $.ajax({
+                url: "/ancom/",
+                type: 'post',
+                data: formdata,
+                processData: false,//不處理數據
+                contentType: false,//不設置內容類型，按原格式傳輸
+                success: function (response) {
+                    $.each(response[0], function (key) {
+                        $('#select_metadata').append('<option>' + response[0][key] + '</option>')
+                    })
+                    $.each(response[1], function (key) {
+                        $('#select_table').append('<option>' + response[1][key] + '</option>')
+                    })
+                    $.each(response[2], function (key) {
+                        $('#select_taxonomy').append('<option>' + response[2][key] + '</option>')
+                    })
+                },
+                error: function () {
+                    alert("失敗")
+                }
+            })
+            // alert("success")
+        })
+
+
+        $('#target_file').click(function (e) {
+            e.preventDefault
+            //ajax上傳文件必須通過FormData對象傳輸數據
+            var formdata = new FormData();
+            var user_proj = $('#select_proj').val();
+            var target_metadata = $('#select_metadata').val();
+            var target_table = $('#select_table').val();
+            var target_taxonomy = $('#select_taxonomy').val();
+            // alert($('#select_clas').val())
+            formdata.append('user_proj', user_proj);
+            formdata.append('target_file', "true");
+            formdata.append('target_metadata', target_metadata);
+            formdata.append('target_table', target_table);
+            formdata.append('target_taxonomy', target_taxonomy);
+            $("#class_div").css("display", "inline", "padding", "3px"); // 顯示第二層選單
+            $("#para_div").css("display", "none")
+            $("#meta_div").css("display", "none")
+            $("#view_div").css("display", "none")
+            $.ajax({
+                url: "/ancom/",
+                type: 'post',
+                data: formdata,
+                processData: false,//不處理數據
+                contentType: false,//不設置內容類型，按原格式傳輸
+                success: function (response) {
+                    $.each(response, function (key, value) {
+                        // alert("測試")
+                        $('#select_clas').append('<option>' + response[key] + '</option>')
+                    });
+                },
+                error: function () {
+                    alert("失敗")
+                }
+            })
+            // alert("success")
+        })
+        $('#target_clas').click(function (e) {
+            alert("heeeeeeeeeeee")
+            e.preventDefault
+            //ajax上傳文件必須通過FormData對象傳輸數據
+
+            var formdata = new FormData();
+            var user_proj = $('#select_proj').val();
+            var target_clas = $('#select_clas').val();
+            formdata.append('user_proj', user_proj);
+            formdata.append('target_clas', target_clas);
+            formdata.append('target_file', "");
+            formdata.append('target_metadata', target_metadata);
+            formdata.append('target_table', target_table);
+            formdata.append('target_taxonomy', target_taxonomy);
+            alert("jjjjjjjjjjjjj")
+            $("#para_div").css("display", "inline")
+            $("#meta_div").css("display", "none")
+            $("#view_div").css("display", "none")
+            $.ajax({
+                url: "/ancom/",
+                type: 'post',
+                data: formdata,
+                processData: false,//不處理數據
+                contentType: false,//不設置內容類型，按原格式傳輸
+                success: function (response) {
+                    alert("here")
+                    $.each(response, function (key, value) {
+                        // alert("測試")
+                        $('#select_para').append('<option>' + response[key] + '</option>')
+                    });
+                },
+                error: function () {
+                    alert("失敗")
+                }
+            })
+            // alert("success")
+        })
+
+        $('#target_para').click(function (e) {
+            e.preventDefault
+            //ajax上傳文件必須通過FormData對象傳輸數據
+            var formdata = new FormData();
+            var user_proj = $('#select_proj').val();
+            var target_clas = $('#select_clas').val();
+            var target_para = $('#select_para').val();
+            // alert($('#select_clas').val())
+            formdata.append('user_proj', user_proj);
+            formdata.append('target_file', "true");
+            formdata.append('target_metadata', target_metadata);
+            formdata.append('target_table', target_table);
+            formdata.append('target_taxonomy', target_taxonomy);
+            formdata.append('target_para', target_para);
+            formdata.append('target_clas', target_clas);
+            $("#meta_div").css("display", "inline")
+            $("#view_div").css("display", "none")
+            $.ajax({
+                url: "/ancom/",
+                type: 'post',
+                data: formdata,
+                processData: false,//不處理數據
+                contentType: false,//不設置內容類型，按原格式傳輸
+                success: function (response) {
+                    $.each(response, function (key, value) {
+                        // alert("測試")
+                        $('#select_meta').append('<option>' + response[key] + '</option>')
+                    });
+                },
+                error: function () {
+                    alert("失敗")
+                }
+            })
+            // alert("success")
+        })
+
+        $('#target_meta').click(function (e) {
+            e.preventDefault
+            //ajax上傳文件必須通過FormData對象傳輸數據
+            var formdata = new FormData();
+            var user_proj = $('#select_proj').val();
+            formdata.append('target_file', "true");
+            formdata.append('target_metadata', target_metadata);
+            formdata.append('target_table', target_table);
+            formdata.append('target_taxonomy', target_taxonomy);
+            var target_clas = $('#select_clas').val();
+            var target_para = $('#select_para').val();
+            var target_meta = $('#select_meta').val();
+            // alert($('#select_clas').val())
+            formdata.append('user_proj', user_proj);
+            formdata.append('target_para', target_para);
+            formdata.append('target_clas', target_clas);
+            formdata.append('target_meta', target_meta);
+            $("#target_proj").attr("disabled", "disabled")
+            $("#target_clas").attr("disabled", "disabled")
+            $("#target_para").attr("disabled", "disabled")
+            $("#target_meta").attr("disabled", "disabled")
+            $("#process").css("display", "inline")
+            $("#view_div").css("display", "none")
+            $.ajax({
+                url: "/ancom/",
+                type: 'post',
+                data: formdata,
+                processData: false,//不處理數據
+                contentType: false,//不設置內容類型，按原格式傳輸
+                success: function (response) {
+                    $("#view_div").css("display", "inline")
+                    $("#target_proj").attr("disabled", false)
+                    $("#target_clas").attr("disabled", false)
+                    $("#target_para").attr("disabled", false)
+                    $("#target_meta").attr("disabled", false)
+                    $("#process").css("display", "none")
+                },
+                error: function () {
+                    alert("失敗")
+                }
+            })
+            // alert("success")
+        })
+
+        $('#view').click(function (e) {
+            e.preventDefault
+            //ajax上傳文件必須通過FormData對象傳輸數據
+            var formdata = new FormData();
+            var user_proj = $('#select_proj').val();
+            formdata.append('target_file', "true");
+            formdata.append('target_metadata', target_metadata);
+            formdata.append('target_table', target_table);
+            formdata.append('target_taxonomy', target_taxonomy);
+            formdata.append('user_proj', user_proj);
+            $.ajax({
+                url: "/ancom/ancom-subject/",
+                type: 'post',
+                data: formdata,
+                processData: false,//不處理數據
+                contentType: false,//不設置內容類型，按原格式傳輸
+                success: function (response) {
+                    // alert(response)
+                    window.open("/ancom/ancom-subject/")
+                },
+                error: function () {
+                    alert("失敗")
+                }
+            })
+        })
+
+    })
+</script>
+
+{% endblock %}

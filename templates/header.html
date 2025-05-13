@@ -1,0 +1,64 @@
+<head>
+    {% load static %} <!-- Instruct Django to load static files -->
+    <link rel="stylesheet" type="text/css" href="{% static 'css/header.css' %}" />
+</head>
+
+<body>
+    <div class="container-fluid nav-bar">
+        <nav class="navbar navbar-light navbar-expand-lg py-0">
+
+            <!-- <div class="container"> -->
+            <!-- <a href="/" class="navbar-brand"> -->
+            <h3 class="title" href="#">ALL in AAL<spans class="text-dark">
+                </spans>
+            </h3>
+            <!-- <a class="navbar-brand" href="#" style="text-align:left">ALL in AAL</a> -->
+            <!-- </a> -->
+            <button class="navbar-toggler py-2 px-3" type="button" data-bs-toggle="collapse"
+                data-bs-target="#navbarCollapse">
+                <span class="fa fa-bars text-primary"></span>
+            </button>
+            <div class="collapse navbar-collapse" id="navbarCollapse" style="float:left">
+                <div class="navbar-nav">
+                    <a href="/" class="nav-item nav-link">Home</a>
+
+
+                    <a href="/login/" id="Start" class="nav-item nav-link"> Start</a>
+
+                    <div class="nav-item dropdown">
+                        <a href="#" class="nav-link dropdown-toggle" data-bs-toggle="dropdown">Analysis</a>
+                        <div class="dropdown-menu bg-light">
+                            <a href="/ancom/" class="dropdown-item">Ancom</a>
+                            <a href="/ancombc/" class="dropdown-item">Ancombc</a>
+                            <a href="/lefse/" class="dropdown-item">LEfse</a>
+                        </div>
+                    </div>
+
+                    <div class="nav-item dropdown">
+                        <a href="#" class="nav-link dropdown-toggle" data-bs-toggle="dropdown">Proj</a>
+                        <div class="dropdown-menu bg-light">
+                            <a href="/addproj/" class="dropdown-item">Create project</a>
+                            <a href="/manageproj/" class="dropdown-item">Manage project</a>
+                        </div>
+                    </div>
+                    <!-- {% if not request.session.s_userID %}
+                    {% else %} -->
+                    <!-- {% endif %} -->
+                </div>
+            </div>
+
+            <!-- </div> -->
+        </nav>
+    </div>
+
+</body>
+<script>
+    $(function () {
+        ///////////////////// build_project/////////////////////
+        $('#home').click(function (e) {
+            e.preventDefault();
+            alert("hey")
+            // $("#home").css("nav-item nav-link-active");
+        })
+    })
+</script>

@@ -1,0 +1,327 @@
+{% extends 'base.html' %}
+{% block title %}manageproj{% endblock %}
+{% block content %}
+{% load static %}
+
+<head>
+    <script src="https://cdn.bootcss.com/jquery/3.4.1/jquery.js"></script>
+    <!--不能用下面這個-->
+    <!-- <script src="/work1791/b09901010/project/mainsite/templates/static/js/jquery-3.2.1.min.js"></script> -->
+    <!-- <script src="/work1791/b09901010/project/mainsite/templates/static/js/jquery-3.2.1.min.js"></script> -->
+
+    <!--uploadfile-->
+    <link rel="stylesheet" type="text/css" href="{% static 'css/upload.css' %}">
+    <link rel="stylesheet" type="text/css" href="{% static 'css/login.css' %}" />
+    <!-- <script src="http://ajax.googleapis.com/ajax/libs/jquery/1.9.1/jquery.min.js"></script> -->
+    <script src="{% static 'js/upload.js' %}"></script>
+</head>
+
+<body>
+    <!--Build Project-->
+    <div class=" card-header bg-primary" align="center">
+        <h4 style="color:white">Please Choose Project</h4>
+    </div>
+    <div style="padding:1em"></div>
+    <div align="center">
+        {% csrf_token %}
+        <select id="select_proj" name="select_proj">
+            {% for proj in proj_list %}
+            <option>{{proj}}</option>
+            <!-- <ul><a class="dropdown-item">{{proj}}</a></ul> -->
+            {% endfor %}
+        </select>
+        <input type="button" id="target_proj" value="Confirm">
+        {{ur_proj}}
+    </div>
+    <div>
+        <div class="form-check">
+            <input class="form-check-input" type="radio" name="flexRadioDefault" id="radio1">
+            <label class="form-check-label" for="radio1">
+                Add data to project
+            </label>
+        </div>
+        <div class="form-check">
+            <input class="form-check-input" type="radio" name="flexRadioDefault" id="radio2">
+            <label class="form-check-label" for="radio2">
+                Remove data from project
+            </label>
+        </div>
+        <div class="form-check">
+            <input class="form-check-input" type="radio" name="flexRadioDefault" id="radio3">
+            <label class="form-check-label" for="radio3">
+                Download results
+            </label>
+        </div>
+        <div class="form-check">
+            <input class="form-check-input" type="radio" name="flexRadioDefault" id="radio4">
+            <label class="form-check-label" for="flexRadioDefault2">
+                Remove projects
+            </label>
+        </div>
+    </div>
+
+    <div id="file_div" style="display:none;">
+        <div class=" card-header bg-primary" align="center">
+            <h4 style="color:white">Please Choose file</h4>
+        </div>
+        <div style="padding:1em"></div>
+        <div id="file" align="center">
+            {% csrf_token %}
+        </div>
+        <div align="center">
+            {% csrf_token %}
+            <div>
+                <div style="padding: 0.5em"></div>
+                <h4 style="color:gray">sample-metadata (.tsv /.txt)</h4>
+                <div id="uploaded_sample" style="color:#d4a762b3">Upload</div>
+            </div>
+            <div>
+                <div style="padding: 0.5em;"></div>
+                <h4 style="color:gray">table (.qza)</h4>
+                <div id="uploaded_table" style="color:rgba(212, 167, 98, 0.7)">Upload</div>
+            </div>
+            <div>
+                <div style="padding: 0.5em"></div>
+                <h4 style="color:gray">taxonomy (.qza)</h4>
+                <div id="uploaded_taxonomy" style="color:#d4a762b3">Upload</div>
+            </div>
+        </div>
+    </div>
+    </div>
+
+    <!-- </div> -->
+</body>
+
+<script>
+    $(function () {
+
+        $('#target_proj').click(function (e) {
+            e.preventDefault
+            //ajax上傳文件必須通過FormData對象傳輸數據
+            var formdata = new FormData();
+            var user_proj = $('#select_proj').val();
+            // alert($('#select_proj').val())
+            formdata.append('user_proj', user_proj);
+            $("#file_div").css("display", "inline"); // 顯示第二層選單
+            $.ajax({
+                url: "/manageproj/",
+                type: 'post',
+                data: formdata,
+                processData: false,//不處理數據
+                contentType: false,//不設置內容類型，按原格式傳輸
+                success: function (response) {
+                    $.each(response, function (key, value) {
+                        // alert("測試")
+                        $('#file').append('<div>' + response[key])
+                        $('#file').append('<input type="button" id=' + response[key] + ' value="Remove">')
+                        $('#file').append('</div>')
+                    });
+                },
+                error: function () {
+                    alert("失敗")
+                }
+            })
+            // alert("success")
+        })
+
+        $('#target_file').click(function (e) {
+            e.preventDefault
+            //ajax上傳文件必須通過FormData對象傳輸數據
+            var formdata = new FormData();
+            var user_proj = $('#select_file').val();
+            // alert($('#select_proj').val())
+            formdata.append('user_proj', user_proj);
+
+            $.ajax({
+                url: "/manageproj/",
+                type: 'post',
+                data: formdata,
+                processData: false,//不處理數據
+                contentType: false,//不設置內容類型，按原格式傳輸
+                success: function (response) {
+                    $.each(response, function (key, value) {
+                        // alert("測試")
+                        $('#select_clas').append('<option>' + response[key] + '</option>')
+                    });
+                },
+                error: function () {
+                    alert("失敗")
+                }
+            })
+            // alert("success")
+        })
+
+        $('#radio1').click(function (e) {
+            e.preventDefault
+            //ajax上傳文件必須通過FormData對象傳輸數據
+            var formdata = new FormData();
+            var user_proj = $('#select_file').val();
+            // alert($('#select_proj').val())
+            formdata.append('user_proj', user_proj);
+
+            $.ajax({
+                url: "/manageproj/",
+                type: 'post',
+                data: formdata,
+                processData: false,//不處理數據
+                contentType: false,//不設置內容類型，按原格式傳輸
+                success: function (response) {
+                    $.each(response, function (key, value) {
+                        // alert("測試")
+                        $('#select_clas').append('<option>' + response[key] + '</option>')
+                    });
+                },
+                error: function () {
+                    alert("失敗")
+                }
+            })
+            // alert("success")
+        })
+
+        $('#radio2').click(function (e) {
+            e.preventDefault
+            //ajax上傳文件必須通過FormData對象傳輸數據
+            var formdata = new FormData();
+            var user_proj = $('#select_file').val();
+            // alert($('#select_proj').val())
+            formdata.append('user_proj', user_proj);
+
+            $.ajax({
+                url: "/manageproj/",
+                type: 'post',
+                data: formdata,
+                processData: false,//不處理數據
+                contentType: false,//不設置內容類型，按原格式傳輸
+                success: function (response) {
+                    $.each(response, function (key, value) {
+                        // alert("測試")
+                        $('#select_clas').append('<option>' + response[key] + '</option>')
+                    });
+                },
+                error: function () {
+                    alert("失敗")
+                }
+            })
+            // alert("success")
+        })
+
+        $('#radio3').click(function (e) {
+            e.preventDefault
+            //ajax上傳文件必須通過FormData對象傳輸數據
+            var formdata = new FormData();
+            var user_proj = $('#select_file').val();
+            // alert($('#select_proj').val())
+            formdata.append('user_proj', user_proj);
+
+            $.ajax({
+                url: "/manageproj/",
+                type: 'post',
+                data: formdata,
+                processData: false,//不處理數據
+                contentType: false,//不設置內容類型，按原格式傳輸
+                success: function (response) {
+                    $.each(response, function (key, value) {
+                        // alert("測試")
+                        $('#select_clas').append('<option>' + response[key] + '</option>')
+                    });
+                },
+                error: function () {
+                    alert("失敗")
+                }
+            })
+            // alert("success")
+        })
+
+        $('#radio4').click(function (e) {
+            e.preventDefault
+            //ajax上傳文件必須通過FormData對象傳輸數據
+            var formdata = new FormData();
+            var user_proj = $('#select_file').val();
+            // alert($('#select_proj').val())
+            formdata.append('user_proj', user_proj);
+
+            $.ajax({
+                url: "/manageproj/",
+                type: 'post',
+                data: formdata,
+                processData: false,//不處理數據
+                contentType: false,//不設置內容類型，按原格式傳輸
+                success: function (response) {
+                    $.each(response, function (key, value) {
+                        // alert("測試")
+                        $('#select_clas').append('<option>' + response[key] + '</option>')
+                    });
+                },
+                error: function () {
+                    alert("失敗")
+                }
+            })
+            // alert("success")
+        })
+
+        $('#uploaded_sample').uploadFile({
+
+            allowedTypes: "tsv,txt",
+            url: "/addproj/",
+            fileName: "sample-metadata",
+            showDelete: true,
+            showDone: false,
+            showProgress: true,
+            dynamicFormData: function () {
+                var nameVal = $('#user_proj').val();
+                var uploadParam = {
+                    projName_2: nameVal
+                }
+                return uploadParam
+            }, onSuccess: function (y, x, z, s) {
+                filecount = filecount + 1
+            }
+        })
+        ///////////////////// upload table/////////////////////
+        $('#uploaded_table').uploadFile({
+            allowedTypes: "qza",
+            url: "/addproj/",
+            fileName: "table",
+            showDelete: true,
+            showDone: false,
+            showProgress: true,
+            dynamicFormData: function () {
+                var nameVal = $('#user_proj').val();
+                var uploadParam = {
+                    projName_2: nameVal
+                }
+                return uploadParam
+            },
+            onSuccess: function (y, x, z, s) {
+                filecount = filecount + 1
+            }
+        })
+        ///////////////////// upload taxonomy/////////////////////
+        $('#uploaded_taxonomy').uploadFile({
+            allowedTypes: "qza",
+            url: "/addproj/",
+            fileName: "taxonomy",
+            showDelete: true,
+            showDone: false,
+            showProgress: true,
+            dynamicFormData: function () {
+                var nameVal = $('#user_proj').val();
+                var uploadParam = {
+                    projName_2: nameVal
+                }
+                return uploadParam
+            },
+            onSuccess: function (y, x, z, s) {
+                filecount = filecount + 1
+                if (filecount === 3) {
+                    $("#guide").css("display", "inline");
+                }
+
+            }
+        })
+
+
+    })
+
+</script>
+{% endblock %}
